@@ -10,6 +10,16 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
+const genreController = require('./controllers/genre.controller');
+const artistController = require('./controllers/artist.controller');
+const songController = require('./controllers/song.controller');
+const albumController = require('./controllers/album.controller');
+
+app.use('/genres', genreController);
+app.use('/artists', artistController);
+app.use('/songs', songController);
+app.use('/albums', albumController);
+
 app.get('/', async (req, res) => {
 
     try {
