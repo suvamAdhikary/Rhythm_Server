@@ -20,16 +20,16 @@ const NumF = {
     required: false,
 };
 
-const albumSchema = mongoose.Schema({
+const songSchema = mongoose.Schema({
     name: StrT,
-    artists: [{type: mongoose.Schema.Types.ObjectId, ref: 'artist'}],
     genres: [{type: mongoose.Schema.Types.ObjectId, ref: 'genre'}],
-    songs: [{type: mongoose.Schema.Types.ObjectId, ref: 'song'}],
-    year: NumT,
+    album: {type: mongoose.Schema.Types.ObjectId, ref: 'album'},
+    released: NumF,
     date: StrF,
     languages: [StrF],
-    noOfSong: {...NumT, default: 0},
-    lyricists: [StrF],
+    duration: StrT,
+    lyricist: StrF,
+    lyric: StrF,
     audios: [StrF],
     videos: [StrF],
     composers: [StrF],
@@ -41,6 +41,6 @@ const albumSchema = mongoose.Schema({
     timestamps: true,
 })
 
-const Album = mongoose.model('album', albumSchema);
+const Song = mongoose.model('song', songSchema);
 
-module.exports = Album;
+module.exports = Song;
