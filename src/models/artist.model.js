@@ -1,42 +1,84 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+const bcryptjs = require("bcryptjs");
 
 const StrT = {
-    type: String,
-    required: true,
+  type: String,
+  required: true,
 };
 
 const StrF = {
-    type: String,
-    required: false,
+  type: String,
+  required: false,
 };
 
 const NumT = {
-    type: Number,
-    required: true,
+  type: Number,
+  required: true,
 };
 
 const NumF = {
-    type: Number,
-    required: false,
+  type: Number,
+  required: false,
 };
 
-const artistSchema = mongoose.Schema({
+const artistSchema = mongoose.Schema(
+  {
     name: StrT,
-    email: StrT,
+    email: {...StrT, unique: true},
     password: StrT,
     about: StrF,
-    genres: [{type: mongoose.Schema.Types.ObjectId, ref: 'genre', required: true}],
-    albums: [{type: mongoose.Schema.Types.ObjectId, ref: 'album'}],
-    songs: [{type: mongoose.Schema.Types.ObjectId, ref: 'songs'}],
+    logo: StrF,
+    profilePic: StrF,
+    coverPic: StrF,
+    photos: [StrF],
+    genres: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "genre",
+      },
+    ],
+    albums: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "album",
+      },
+    ],
+    songs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "song",
+      },
+    ],
     awards: [StrF],
     wiki: StrF,
     web: StrF,
-    birth: StrF
-}, {
+    birth: StrF,
+  },
+  {
     versionKey: false,
     timestamps: true,
+  }
+);
+
+artistSchema.pre("save", function (next) {
+  if (!this.isModified("password")) return next();
+
+  const hash = bcryptjs.hashSync(this.password, 8);
+
+  this.password = hash;
+
+  return next();
 });
 
-const Artist = mongoose.model('artist', artistSchema);
+
+artistSchema.methods.checkPassword = function (password) {
+  const match = bcryptjs.compareSync(password, this.password);
+
+  return match;
+};
+
+
+const Artist = mongoose.model("artist", artistSchema);
 
 module.exports = Artist;

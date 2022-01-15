@@ -1,29 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const StrT = {
-    type: String,
-    required: true,
+  type: String,
+  required: true,
 };
 
 const StrF = {
-    type: String,
-    required: false,
+  type: String,
+  required: false,
 };
 
 const NumT = {
-    type: Number,
-    required: true,
+  type: Number,
+  required: true,
 };
 
 const NumF = {
-    type: Number,
-    required: false,
+  type: Number,
+  required: false,
 };
 
-const songSchema = mongoose.Schema({
+const songSchema = mongoose.Schema(
+  {
     name: StrT,
-    genres: [{type: mongoose.Schema.Types.ObjectId, ref: 'genre'}],
-    album: {type: mongoose.Schema.Types.ObjectId, ref: 'album'},
+    genres: [{ type: mongoose.Schema.Types.ObjectId, ref: "genre" }],
+    album: { type: mongoose.Schema.Types.ObjectId, ref: "album" },
+    artists: [{ type: mongoose.Schema.Types.ObjectId, ref: "artist" }],
+    photos: [StrF],
+    logo: StrF,
     released: NumF,
     date: StrF,
     languages: [StrF],
@@ -36,11 +40,13 @@ const songSchema = mongoose.Schema({
     info: StrF,
     wiki: StrF,
     links: [StrF],
-}, {
+  },
+  {
     versionKey: false,
     timestamps: true,
-})
+  }
+);
 
-const Song = mongoose.model('song', songSchema);
+const Song = mongoose.model("song", songSchema);
 
 module.exports = Song;
