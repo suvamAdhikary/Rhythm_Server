@@ -7,9 +7,35 @@ const Album = require("../models/album.model");
 const curdController = require("./crud.controller");
 
 router.post("", curdController.post(Album));
-router.get("", curdController.get(Album));
 router.patch("/:id", curdController.updateOne(Album));
 router.delete("/:id", curdController.deleteOne(Album));
+
+router.get("", async (req, res) => {
+  const page = +req.query.page || 1;
+  const size = +req.query.limit || 5;
+  const offset = (page - 1) * size;
+
+  try {
+    const data = await Album
+                          .find({})
+                          .skip(offset)
+                          .limit(size)
+                          .populate({
+                            path: "artists",
+                            select: "name profilePic"
+                          })
+                          .lean()
+                          .exec();
+
+    const pages = Math.ceil(
+      (await Album.find({}).countDocuments().lean().exec()) / size
+    );
+
+    return res.status(200).send({ data, pages });
+  } catch (err) {
+    return res.status(400).send({ err });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   try {
