@@ -15,8 +15,8 @@ router.delete("/:id", curdController.deleteOne(Album));
 // GET ALL ALBUMS
 
 router.get("", async (req, res) => {
-  const genres = req.params.genre.split("+");
-  const sort = req.params.sort;
+  // const genres = req.params?.genre?.split("+");
+  // const sort = req.params?.sort;
   const page = +req.query.page || 1;
   const size = +req.query.limit || 5;
   const offset = (page - 1) * size;
