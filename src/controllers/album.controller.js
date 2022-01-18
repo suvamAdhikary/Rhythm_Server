@@ -49,8 +49,6 @@ router.get("", async (req, res) => {
     const pages = Math.ceil(
       (await Album.find(genres.length > 0 ? { genres: { $in: genres } } : {})
         .sort(sort && { year: sort })
-        .skip(offset)
-        .limit(size)
         .countDocuments()
         .lean()
         .exec()) / size
