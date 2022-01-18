@@ -43,6 +43,10 @@ router.get("", async (req, res) => {
         path: "artists",
         select: "name profilePic",
       })
+      .populate({
+        path: "genres",
+        select: "title"
+      })
       .lean()
       .exec();
 
