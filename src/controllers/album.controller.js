@@ -15,14 +15,14 @@ router.delete("/:id", curdController.deleteOne(Album));
 // GET ALL ALBUMS
 
 router.get("", async (req, res) => {
-  let genres = req.query?.genre;
-
+  let genres = req.query?.Genre;
+console.log(genres);
   if(genres !== "" && genres !== undefined && genres !== null) {
     genres = genres.split("%0N");
   } else {
     genres = [];
   }
-  let sort = req.query?.sort;
+  let sort = req.query?.Sort;
   if(sort === 'NTO'){
     sort = -1;
   } else if(sort === 'OTN'){
@@ -30,10 +30,10 @@ router.get("", async (req, res) => {
   } else {
     sort = 0;
   }
-
   const page = +req.query.page || 1;
   const size = +req.query.limit || 5;
   const offset = (page - 1) * size;
+
   try {
     const data = await Album.find( genres.length > 0 ? {genres: {$in: genres}} : {})
       .sort(sort && {year: sort})
