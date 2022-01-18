@@ -15,15 +15,28 @@ router.delete("/:id", curdController.deleteOne(Album));
 // GET ALL ALBUMS
 
 router.get("", async (req, res) => {
-  // const genres = req.params?.genre?.split("+");
-  // const sort = req.params?.sort;
+  let genres = req.query?.genre;
+
+  if(genres !== "" && genres !== undefined && genres !== null) {
+    genres = genres.split("%0N");
+  } else {
+    genres = [];
+  }
+  let sort = req.query?.sort;
+  if(sort === 'NTO'){
+    sort = -1;
+  } else if(sort === 'OTN'){
+    sort = 1;
+  } else {
+    sort = 0;
+  }
+
   const page = +req.query.page || 1;
   const size = +req.query.limit || 5;
   const offset = (page - 1) * size;
-
   try {
-    const data = await Album.find({})
-      // .sort(sort || 0)
+    const data = await Album.find( genres.length > 0 ? {genres: {$in: genres}} : {})
+      .sort(sort && {year: sort})
       .skip(offset)
       .limit(size)
       .populate({
