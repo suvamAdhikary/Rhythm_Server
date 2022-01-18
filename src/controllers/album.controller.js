@@ -10,22 +10,20 @@ router.post("", curdController.post(Album));
 router.patch("/:id", curdController.updateOne(Album));
 router.delete("/:id", curdController.deleteOne(Album));
 
-
-
 // GET ALL ALBUMS
 
 router.get("", async (req, res) => {
   let genres = req.query?.Genre;
-console.log(genres);
-  if(genres !== "" && genres !== undefined && genres !== null) {
+
+  if (genres !== "" && genres !== undefined && genres !== null) {
     genres = genres.split("%0N");
   } else {
     genres = [];
   }
   let sort = req.query?.Sort;
-  if(sort === 'NTO'){
+  if (sort === "NTO") {
     sort = -1;
-  } else if(sort === 'OTN'){
+  } else if (sort === "OTN") {
     sort = 1;
   } else {
     sort = 0;
@@ -35,8 +33,10 @@ console.log(genres);
   const offset = (page - 1) * size;
 
   try {
-    const data = await Album.find( genres.length > 0 ? {genres: {$in: genres}} : {})
-      .sort(sort && {year: sort})
+    const data = await Album.find(
+      genres.length > 0 ? { genres: { $in: genres } } : {}
+    )
+      .sort(sort && { year: sort })
       .skip(offset)
       .limit(size)
       .populate({
@@ -47,7 +47,13 @@ console.log(genres);
       .exec();
 
     const pages = Math.ceil(
-      (await Album.find({}).countDocuments().lean().exec()) / size
+      (await Album.find(genres.length > 0 ? { genres: { $in: genres } } : {})
+        .sort(sort && { year: sort })
+        .skip(offset)
+        .limit(size)
+        .countDocuments()
+        .lean()
+        .exec()) / size
     );
 
     return res.status(200).send({ data, pages });
@@ -55,9 +61,6 @@ console.log(genres);
     return res.status(400).send({ err });
   }
 });
-
-
-
 
 // GET A ALBUM BY ID
 
@@ -76,25 +79,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-
 // DEBOUNCE
 
 router.get("/api/search", async (req, res) => {
   try {
     let q = req.query.q;
 
-    let key = new RegExp(q, 'i');
+    let key = new RegExp(q, "i");
 
-    const albums = await Album.find({name: {$regex: key}}).select('_id name').lean().exec();
+    const albums = await Album.find({ name: { $regex: key } })
+      .select("_id name")
+      .lean()
+      .exec();
 
-    return res.status(200).json({ albums })
-
-  }
-  catch (err) {
+    return res.status(200).json({ albums });
+  } catch (err) {
     return res.status(400).json({ ERR: err.message });
   }
-})
-
+});
 
 module.exports = router;
